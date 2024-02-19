@@ -1,15 +1,19 @@
 package com.user.service.services.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.user.service.entities.Hotel;
 import com.user.service.entities.Rating;
 import com.user.service.entities.User;
 import com.user.service.exceptions.ResourceNotFoundException;
@@ -48,10 +52,27 @@ public class UserServiceImpl implements UserService{
 		User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User with given id is not found on server !!: "+userId));
 		//fetch rating of the above user from the RATING SERVICE
 		//http://localhost:8083/ratings/users/8d509b7e-e5e6-4df8-b579-c4c5958211af
-		ArrayList<Rating> ratingsByUser = restTemplate.getForObject("http://localhost:8083/ratings/users/"+userId, ArrayList.class);
+		Rating[] ratingsByUser = restTemplate.getForObject("http://localhost:8083/ratings/users/"+userId, Rating[].class);
 		logger.info("{} ", ratingsByUser);
 		
-		user.setRatings(ratingsByUser);
+		//List<Rating> ratings = Arrays.stream(ratingsByUser).toList();
+		//List<Rating> finalRatingList = ratings.stream().map(r -> {
+		
+		List<Rating> finalRatingList = Arrays.stream(ratingsByUser).map(r -> {
+			//api call to hotel service to get the hotel 
+			//http://localhost:8082/hotels/6ccc8edd-2169-4185-99ca-c9b560caa5b4
+			ResponseEntity<Hotel> hotelEntt = restTemplate.getForEntity("http://localhost:8082/hotels/"+r.getHotelId(), Hotel.class);
+			
+			Hotel hotel = hotelEntt.getBody();
+			logger.info("Response Status Code: {}"+hotelEntt.getStatusCode());
+			
+			//set the hotel to rating
+			r.setHotel(hotel);
+			
+			//return the rating
+			return r;
+		}).collect(Collectors.toList());
+		user.setRatings(finalRatingList);
 		return user;
 	}
 
