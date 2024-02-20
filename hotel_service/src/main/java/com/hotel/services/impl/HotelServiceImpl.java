@@ -24,13 +24,13 @@ public class HotelServiceImpl implements HotelService {
 
 	@Override
 	public List<Hotel> getAll() {
-		// TODO Auto-generated method stub
+		// 
 		return hotelRepository.findAll();
 	}
 
 	@Override
 	public Hotel get(String id) {
-		// TODO Auto-generated method stub
+		// 
 		return hotelRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("hotel with given id is not found!!"));
 	}
 	

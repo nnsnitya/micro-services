@@ -15,19 +15,19 @@ public class RatingServiceImpl implements RatingService {
 
 	@Override
 	public Rating create(Rating rating) {
-		// TODO Auto-generated method stub
+		// 
 		return ratingRepository.save(rating);
 	}
 
 	@Override
 	public List<Rating> getRatings() {
-		// TODO Auto-generated method stub
+		// 
 		return ratingRepository.findAll();
 	}
 
 	@Override
 	public List<Rating> getRatingByUserId(String userId) {
-		// TODO Auto-generated method stub
+		// 
 		return ratingRepository.findByUserId(userId);
 	}
 
