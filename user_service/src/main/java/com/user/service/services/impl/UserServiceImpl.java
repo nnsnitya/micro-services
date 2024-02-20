@@ -52,7 +52,8 @@ public class UserServiceImpl implements UserService{
 		User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User with given id is not found on server !!: "+userId));
 		//fetch rating of the above user from the RATING SERVICE
 		//http://localhost:8083/ratings/users/8d509b7e-e5e6-4df8-b579-c4c5958211af
-		Rating[] ratingsByUser = restTemplate.getForObject("http://localhost:8083/ratings/users/"+userId, Rating[].class);
+		//Rating[] ratingsByUser = restTemplate.getForObject("http://localhost:8083/ratings/users/"+userId, Rating[].class);
+		Rating[] ratingsByUser = restTemplate.getForObject("http://rating-service/ratings/users/"+userId, Rating[].class);
 		logger.info("{} ", ratingsByUser);
 		
 		//List<Rating> ratings = Arrays.stream(ratingsByUser).toList();
@@ -61,7 +62,8 @@ public class UserServiceImpl implements UserService{
 		List<Rating> finalRatingList = Arrays.stream(ratingsByUser).map(r -> {
 			//api call to hotel service to get the hotel 
 			//http://localhost:8082/hotels/6ccc8edd-2169-4185-99ca-c9b560caa5b4
-			ResponseEntity<Hotel> hotelEntt = restTemplate.getForEntity("http://localhost:8082/hotels/"+r.getHotelId(), Hotel.class);
+			//ResponseEntity<Hotel> hotelEntt = restTemplate.getForEntity("http://localhost:8082/hotels/"+r.getHotelId(), Hotel.class);
+			ResponseEntity<Hotel> hotelEntt = restTemplate.getForEntity("http://hotel-service/hotels/"+r.getHotelId(), Hotel.class);
 			
 			Hotel hotel = hotelEntt.getBody();
 			logger.info("Response Status Code: {}"+hotelEntt.getStatusCode());
