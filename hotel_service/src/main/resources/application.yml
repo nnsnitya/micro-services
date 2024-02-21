@@ -14,8 +14,5 @@ spring:
     show-sql: true
     
   application:    name: HOTEL-SERVICE
+  config:    import: optional:configserver:http://localhost:8085
     
-eureka:  client:    register-with-eureka: true
-    fetch-registry: true
-    service-url:      defaultZone: http://localhost:8761/eureka
-  instance:    prefer-ip-address: true
